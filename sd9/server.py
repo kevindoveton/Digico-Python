@@ -20,7 +20,7 @@ from time import sleep
 def changeAuxValue(auxnumber, channel, value):
 	data = model_to_dict(SD9.objects.get(pk=1))
 	jsonData = json.loads(data["aux"+str(auxnumber)+"Values"])
-	jsonData[channel-1] = value
+	jsonData[channel-1] = float(value)
 	data["aux"+str(auxnumber)+"Values"] = json.dumps(jsonData)
 	SD9(**data).save()
 
@@ -75,9 +75,11 @@ def serverStuff():
 		server.handle_request()
 
 count = 0
+bcount = 0
 def clientStuff():
 	global localdata
 	global count
+	global bcount
 	for z in range(1,13):
 		data = model_to_dict(SD9.objects.get(pk=1))
 		auxArray = data["aux"+str(z)+"Values"]
