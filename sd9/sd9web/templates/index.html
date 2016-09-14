@@ -1,0 +1,59 @@
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/static/rangeslider.css">
+
+    <script src="/static/jquery.min.js"></script>
+	<script src="/static/rangeslider.min.js"></script>
+	<script>
+	//    $('input[type="range"]').rangeslider({
+
+	// 		// Feature detection the default is `true`.
+	// 		// Set this to `false` if you want to use
+	// 		// the polyfill also in Browsers which support
+	// 		// the native <input type="range"> element.
+	// 		polyfill: true,
+
+	// 		// Default CSS classes
+	// 		rangeClass: 'rangeslider',
+	// 		disabledClass: 'rangeslider--disabled',
+	// 		horizontalClass: 'rangeslider--horizontal',
+	// 		verticalClass: 'rangeslider--vertical',
+	// 		fillClass: 'rangeslider__fill',
+	// 		handleClass: 'rangeslider__handle',
+
+	// 		// Callback function
+	// 		onInit: function() {},
+
+	// 		// Callback function
+	// 		onSlide: function(position, value) {},
+
+	// 		// Callback function
+	// 		onSlideEnd: function(position, value) {}
+	// 	});
+$('input[type="range"]').rangeslider({
+    polyfill : false,
+    onInit : function() {
+        this.output = $( '<div class="range-output" />' ).insertAfter( this.$range ).html( this.$element.val() );
+    },
+    onSlide : function( position, value ) {
+        this.output.html( value );
+    }
+});
+	</script>
+</head>
+<body>
+<!-- <label for="fader">Volume</label> -->
+<!-- <input type="range" min="0" max="100" value="50" id="fader" 
+	step="1" oninput="outputUpdate(value)"> -->
+
+	<input
+	    type="range"
+	    min="10"                    
+	    max="1000"                  
+	    step="10"                   
+	    value="300"                 
+	    data-orientation="vertical" 
+	>
+	
+<!-- <output for="fader" id="volume">50</output> -->
+</body>

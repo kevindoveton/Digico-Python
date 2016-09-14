@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="/static/rangeslider.css">
+	<script src="/static/jquery.min.js"></script>
+	<script src="/static/rangeslider.js"></script>
+<script>
+	function createRanges()
+	{
+		var $document = $(document);
+		var selector = '[data-rangeslider]';
+		var $element = $(selector);
+		// For ie8 support
+		var textContent = ('textContent' in document) ? 'textContent' : 'innerText';
+		// Example functionality to demonstrate a value feedback
+		// function valueOutput(element) {
+		// 	var value = element.value;
+		// 	var output = element.parentNode.getElementsByTagName('output')[0] || element.parentNode.parentNode.getElementsByTagName('output')[0];
+		// 	output[textContent] = value;
+		// }
+		
+		// Basic rangeslider initialization
+		$element.rangeslider({
+			// Deactivate the feature detection
+			polyfill: false,
+			// Callback function
+			onInit: function() {
+				// valueOutput(this.$element[0]);
+			},
+			// Callback function
+			onSlide: function(position, value) {
+				// var auxnumber = window.location.pathname.substring(8).replace ( /[^\d.]/g, '' )
+				// var ch = (this.$element[0].id);
+				// // var value = value;
+				// volume = -(Math.pow(10,-((value-100)/100)*Math.log10(151))-1)
+				// $.get( "/sd9/auxupdate/?aux="+auxnumber+"&ch="+ch+"&vol="+volume, function( data ) {
+				// });
+			},
+			// Callback function
+			onSlideEnd: function(position, value) {
+				var auxnumber = window.location.pathname.substring(8).replace ( /[^\d.]/g, '' )
+				var ch = (this.$element[0].id);
+				// var value = value;
+				volume = -(Math.pow(10,-((value-100)/100)*Math.log10(151))-1)
+				volume = Math.round(volume*100)/100
+				$.get( "/sd9/auxupdate/?aux="+auxnumber+"&ch="+ch+"&vol="+volume, function( data ) {
+				});
+				
+
+				// console.log("/sd9/auxupdate/?aux="+auxnumber+"&ch="+ch+"&vol="+volume);
+			}
+		});
+	};
+</script>
+	<script>
+	$(function() {
+		var auxnumber = window.location.pathname.substring(8).replace ( /[^\d.]/g, '' )
+		function getData()
+		{
+			$.get( "/sd9/auxdata/"+auxnumber+"/", function( data ) {
+				data = (JSON.parse(data));
+				
+				for (i = 0; i < data["values"].length; i++)
+				{
+					//100-x(0)*100
+					//log(1+num)/log(1+150)
+					var level = data["values"][i]
+					var faderLevel = 100;
+					if (level <= 0)
+					{
+						faderLevel = 100-(Math.log10(1-level)/Math.log10(1+150))*100
+					}
+					var input = '<div class="fader" style="float: left; width: 80px"><input id="'+(i+1)+'" type="range" min="0" max="100" value="'+faderLevel+'"data-rangeslider data-orientation="vertical"><output class="u-text-left">'+data["names"][i]+'</output></div>'
+					// var dataString = data["names"][i] + " : " + data["values"][i] + "<br />";
+					$( "div#faders" ).append(input);
+				}
+				createRanges();
+			});
+		}
+		getData();
+		function updateData()
+		{
+			$.get( "/sd9/auxdata/"+auxnumber+"/", function( data ) {
+				data = (JSON.parse(data));
+				for (i = 0; i < data["values"].length; i++)
+				{
+					var selector = "input#"+(i+1)
+					var level = data["values"][i]
+					var faderLevel = 100;
+					if (level <= 0)
+					{
+						faderLevel = 100-(Math.log10(1-level)/Math.log10(1+150))*100
+					}
+					if (data["values"][i] !== $(selector).val())
+					{
+						// console.log($(selector).val);
+						// console.log("Sel: ", selector)
+						// console.log("FL: ",faderLevel);
+						// console.log("L: ",level);
+
+						$(selector).val(faderLevel).change();
+					}
+				}
+			});
+		}
+		setInterval(updateData, 1000)
+	});
+	</script>
+	
+</head>
+<body>
+	<div id="faders" >
+		<!-- <input id="1"type="range" min="0" max="100" data-rangeslider data-orientation="vertical">         -->
+		<!-- <output class="u-text-left"></output> -->
+	</div>
+
+</body>
+</html>
