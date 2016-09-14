@@ -2,6 +2,7 @@
 from django.conf import settings
 import os
 import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sd9.settings")
 django.setup()
 
 from sd9server.models import SD9
@@ -9,13 +10,7 @@ from django.forms.models import model_to_dict
 import json
 # END DJANGO
 
-# CONFIG
-IP_ADDRESS = "192.168.2.10"
-DESK_IP_ADDRESS = "192.168.2.5"
-SEND_PORT = 6050
-RECEIVER_PORT = 5050
-# END CONFIG
-
+import ServerSettings
 
 from OSC import OSCServer
 import client
@@ -36,7 +31,7 @@ def changeInputName(channel, name):
 	data.inputNames = json.dumps(jsonData)
 	data.save()
 
-server = OSCServer( (IP_ADDRESS, RECEIVER_PORT) )
+server = OSCServer( (ServerSettings.IP_ADDRESS, ServerSettings.RECEIVER_PORT) )
 
 server.timeout = 0
 run = True
@@ -105,14 +100,14 @@ def clientStuff():
 
 print "--------------------------------"
 print "Server Connected"
-client.connect(DESK_IP_ADDRESS, SEND_PORT)
+client.connect(ServerSettings.DESK_IP_ADDRESS, ServerSettings.SEND_PORT)
 print "Client Connected"
 print "--------------------------------"
 print "Initialising Complete"
 print "--------------------------------"
-print "Server running on " + IP_ADDRESS
-print "TX: " + str(SEND_PORT)
-print "RX: " + str(RECEIVER_PORT)
+print "Server running on " + ServerSettings.IP_ADDRESS
+print "TX: " + str(ServerSettings.SEND_PORT)
+print "RX: " + str(ServerSettings.RECEIVER_PORT)
 print "--------------------------------"
 
 localdata = model_to_dict(SD9.objects.get(pk=1))
