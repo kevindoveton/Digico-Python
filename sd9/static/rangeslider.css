@@ -21,9 +21,10 @@
 
 .rangeslider--vertical {
   width: 20px;
-  min-height: 150px;
-  /*height: 90vh;*/
-  max-height: 100%;
+  /*min-height: 150px;*/
+  height: 80vh;
+  /*max-height: 100%;*/
+  margin: auto;
 }
 
 .rangeslider--disabled {

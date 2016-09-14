@@ -3,58 +3,24 @@
 <head>
   <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="/static/rangeslider.css">
-	<script src="/static/jquery.min.js"></script>
-	<script src="/static/rangeslider.js"></script>
-<script>
-	function createRanges()
-	{
-		var $document = $(document);
-		var selector = '[data-rangeslider]';
-		var $element = $(selector);
-		// For ie8 support
-		var textContent = ('textContent' in document) ? 'textContent' : 'innerText';
-		// Example functionality to demonstrate a value feedback
-		// function valueOutput(element) {
-		// 	var value = element.value;
-		// 	var output = element.parentNode.getElementsByTagName('output')[0] || element.parentNode.parentNode.getElementsByTagName('output')[0];
-		// 	output[textContent] = value;
-		// }
-		
-		// Basic rangeslider initialization
-		$element.rangeslider({
-			// Deactivate the feature detection
-			polyfill: false,
-			// Callback function
-			onInit: function() {
-				// valueOutput(this.$element[0]);
-			},
-			// Callback function
-			onSlide: function(position, value) {
-				// var auxnumber = window.location.pathname.substring(8).replace ( /[^\d.]/g, '' )
-				// var ch = (this.$element[0].id);
-				// // var value = value;
-				// volume = -(Math.pow(10,-((value-100)/100)*Math.log10(151))-1)
-				// $.get( "/sd9/auxupdate/?aux="+auxnumber+"&ch="+ch+"&vol="+volume, function( data ) {
-				// });
-			},
-			// Callback function
-			onSlideEnd: function(position, value) {
-				var auxnumber = window.location.pathname.substring(8).replace ( /[^\d.]/g, '' )
-				var ch = (this.$element[0].id);
-				// var value = value;
-				volume = -(Math.pow(10,-((value-100)/100)*Math.log10(151))-1)
-				volume = Math.round(volume*100)/100
-				$.get( "/sd9/auxupdate/?aux="+auxnumber+"&ch="+ch+"&vol="+volume, function( data ) {
-				});
-				
+	<!-- iOS Full screen -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
-				// console.log("/sd9/auxupdate/?aux="+auxnumber+"&ch="+ch+"&vol="+volume);
-			}
-		});
-	};
-</script>
-	<script>
+	<link rel="stylesheet" href="/static/rangeslider.css">
+	<link rel="stylesheet" href="/static/main.css">
+	<script src="/static/jquery.min.js"></script>
+	
+	<script src="/static/rangeslider.js"></script>
+
+	
+
+<script>
+	// fullscreen on android
+	// if(navigator.userAgent.match(/Android/i)){
+		window.scrollTo(0,1);
+	// }
+
 	$(function() {
 		var auxnumber = window.location.pathname.substring(8).replace ( /[^\d.]/g, '' )
 		function getData()
@@ -70,10 +36,10 @@
 					var faderLevel = 100;
 					if (level <= 0)
 					{
-						faderLevel = 100-(Math.log10(1-level)/Math.log10(1+150))*100
+						faderLevel = 100-(Math.log10(1-level)/Math.log10(1+150))*100;
 					}
-					var input = '<div class="fader" style="float: left; width: 80px"><input id="'+(i+1)+'" type="range" min="0" max="100" value="'+faderLevel+'"data-rangeslider data-orientation="vertical"><output class="u-text-left">'+data["names"][i]+'</output></div>'
-					// var dataString = data["names"][i] + " : " + data["values"][i] + "<br />";
+					
+					var input = '<div class="fader"><input id="'+(i+1)+'" type="range" min="0" max="100" value="'+faderLevel+'"data-rangeslider data-orientation="vertical"><output class="u-text-left">'+data["names"][i]+'</output></div>'
 					$( "div#faders" ).append(input);
 				}
 				createRanges();
@@ -105,13 +71,84 @@
 				}
 			});
 		}
-		setInterval(updateData, 1000)
+		function screenSizeUpdate()
+		{
+			var height = $(window).height();
+			console.log(height);
+			$("#faders").height(height);
+		}
+
+		var updateTimer = null;
+		function startTimers()
+		{
+			updateTimer = setInterval(updateData, 1000);
+			console.log("timer started");
+		}
+
+		function clearTimers()
+		{
+			clearInterval(updateTimer);
+			console.log("timers cleared");
+		}
+
+		$( "#faders" ).bind("touchstart", function() {
+			clearTimers();
+		});
+		$( "#faders" ).bind("mousedown", function() {
+			clearTimers()
+		});
+
+		$( "#faders" ).bind("touchend", function() {
+			startTimers();
+		});
+		$( "#faders" ).bind("mouseup", function() {
+			startTimers();
+		});
+		
+		screenSizeUpdate();
+		startTimers();
+		window.addEventListener('orientationchange', screenSizeUpdate);
+
+		function createRanges()
+		{
+			var $document = $(document);
+			var selector = '[data-rangeslider]';
+			var $element = $(selector);
+			// For ie8 support
+			var textContent = ('textContent' in document) ? 'textContent' : 'innerText';
+			
+			// Basic rangeslider initialization
+			$element.rangeslider({
+				// Deactivate the feature detection
+				polyfill: false,
+				// Callback function
+				onInit: function() {
+
+				},
+
+				// Callback function
+				onSlide: function(position, value) {
+
+				},
+
+				// Callback function
+				onSlideEnd: function(position, value) {
+					var auxnumber = window.location.pathname.substring(8).replace ( /[^\d.]/g, '' )
+					var ch = (this.$element[0].id);
+					// var value = value;
+					volume = -(Math.pow(10,-((value-100)/100)*Math.log10(151))-1)
+					volume = Math.round(volume*100)/100
+					$.get( "/sd9/auxupdate/?aux="+auxnumber+"&ch="+ch+"&vol="+volume, function( data ) {
+					});
+				}
+			});
+		};
 	});
-	</script>
+</script>
 	
 </head>
 <body>
-	<div id="faders" >
+	<div id="faders" class="faders .ui-focus" >
 		<!-- <input id="1"type="range" min="0" max="100" data-rangeslider data-orientation="vertical">         -->
 		<!-- <output class="u-text-left"></output> -->
 	</div>

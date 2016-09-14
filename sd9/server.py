@@ -35,7 +35,6 @@ def changeInputName(channel, name):
 	jsonData[channel-1] = name
 	data.inputNames = json.dumps(jsonData)
 	data.save()
-# changeAuxValue(1,2, 0)
 
 server = OSCServer( (IP_ADDRESS, RECEIVER_PORT) )
 
@@ -71,9 +70,7 @@ for x in range(1,49):
 	server.addMsgHandler("/Input_Channels/"+str(x)+"/Channel_Input/name", inputNameCallback)
 	for y in range(1,12):
 		server.addMsgHandler("/Input_Channels/"+str(x)+"/Aux_Send/"+str(y)+"/send_level", auxVolumeCallback)
-# server.addMsgHandler( "/Input_Channels/24/Aux_Send/1/fader", callback )
 
-# sendMessage("/Input_Channels/24/Aux_Send/1/send_level", -150.0)
 
 def serverStuff():
 	# clear timed_out flag
@@ -106,17 +103,17 @@ def clientStuff():
 	else:
 		count += 1
 
-print "---------------------"
+print "--------------------------------"
 print "Server Connected"
 client.connect(DESK_IP_ADDRESS, SEND_PORT)
 print "Client Connected"
-print "---------------------"
+print "--------------------------------"
 print "Initialising Complete"
-print "---------------------"
+print "--------------------------------"
 print "Server running on " + IP_ADDRESS
 print "TX: " + str(SEND_PORT)
 print "RX: " + str(RECEIVER_PORT)
-print "---------------------"
+print "--------------------------------"
 
 localdata = model_to_dict(SD9.objects.get(pk=1))
 
