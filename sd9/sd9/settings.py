@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sd9server',
     'sd9web',
-    'background_task',
+	'ws4redis'
 ]
 
 MIDDLEWARE = [
@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+				'ws4redis.context_processors.default',
             ],
         },
     },
@@ -124,3 +125,5 @@ STATICFILES_DIRS = [
     '/var/www/static/',
 ]
 STATIC_URL = '/static/'
+
+WEBSOCKET_URL = '/ws/'

@@ -7,4 +7,5 @@ urlpatterns = [
 	url(r'^aux/(?P<auxnumber>[1-9]|1[0-2])/$', views.aux, name='aux'),
 	url(r'^auxdata/(?P<auxnumber>[1-9]|1[0-2])/$', views.auxData, name='auxdata'),
 	url(r'^auxupdate/$', views.auxUpdate, name='auxupdate'),
+	url(r'^auxnames/$', views.auxNames, name='auxnames'),
 ]

@@ -17,3 +17,4 @@ class SD9(models.Model):
 	aux10Values = models.CharField(max_length=1000)
 	aux11Values = models.CharField(max_length=1000)
 	aux12Values = models.CharField(max_length=1000)
+	auxNames = models.CharField(max_length=1000)

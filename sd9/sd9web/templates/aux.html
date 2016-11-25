@@ -9,6 +9,7 @@
 
 	<link rel="stylesheet" href="/static/rangeslider.css">
 	<link rel="stylesheet" href="/static/main.css">
+	<link rel="stylesheet" href="/static/bootstrap.min.css">
 	<script src="/static/jquery.min.js"></script>
 	
 	<script src="/static/rangeslider.js"></script>
@@ -22,26 +23,51 @@
 	// }
 
 	$(function() {
+		var soundMin = 150;
 		var auxnumber = window.location.pathname.substring(8).replace ( /[^\d.]/g, '' )
+
+		function getName()
+		{
+			$.get( "/sd9/auxnames/", function(data) {
+				data = (JSON.parse(data));
+				var auxname = data["values"][auxnumber-1];
+				$("#auxname").text(auxname)
+				// console.log(data["values"]);
+
+			});
+		}
+
 		function getData()
 		{
 			$.get( "/sd9/auxdata/"+auxnumber+"/", function( data ) {
 				data = (JSON.parse(data));
-				
+				var input = "";
 				for (i = 0; i < data["values"].length; i++)
 				{
-					//100-x(0)*100
-					//log(1+num)/log(1+150)
+					//log(1+num)/log(1+maxnum)
 					var level = data["values"][i]
 					var faderLevel = 100;
 					if (level <= 0)
 					{
-						faderLevel = 100-(Math.log10(1-level)/Math.log10(1+150))*100;
+						faderLevel = 100-(Math.log10(1-level)/Math.log10(1+soundMin))*100;
 					}
+
 					
-					var input = '<div class="fader"><input id="'+(i+1)+'" type="range" min="0" max="100" value="'+faderLevel+'"data-rangeslider data-orientation="vertical"><output class="u-text-left">'+data["names"][i]+'</output></div>'
-					$( "div#faders" ).append(input);
+					if (i == 0)
+					{
+						// input += '<div class="group">';
+					}
+					input += '<div class="fader"><input id="'+(i+1)+'" type="range" min="0" max="100" value="'+faderLevel+'"data-rangeslider data-orientation="vertical"><p class="">'+data["names"][i]+'</p></div>'
+					if (((i+1) % 8 == 0) && i+1 !== data["values"].length)
+					{
+						// input += '</div><div class="group">';
+					}
+					else if (i+1 == data["values"].length)
+					{
+						// input += '</div>';
+					}
 				}
+				$( "div#faders" ).append(input);
 				createRanges();
 			});
 		}
@@ -57,7 +83,7 @@
 					var faderLevel = 100;
 					if (level <= 0)
 					{
-						faderLevel = 100-(Math.log10(1-level)/Math.log10(1+150))*100
+						faderLevel = 100-(Math.log10(1-level)/Math.log10(1+soundMin))*100
 					}
 					if (data["values"][i] !== $(selector).val())
 					{
@@ -65,7 +91,7 @@
 						// console.log("Sel: ", selector)
 						// console.log("FL: ",faderLevel);
 						// console.log("L: ",level);
-
+						// console.log(faderLevel);
 						$(selector).val(faderLevel).change();
 					}
 				}
@@ -81,7 +107,7 @@
 		var updateTimer = null;
 		function startTimers()
 		{
-			updateTimer = setInterval(updateData, 1000);
+			updateTimer = setInterval(updateData, 100);
 			console.log("timer started");
 		}
 
@@ -106,6 +132,7 @@
 		});
 		
 		screenSizeUpdate();
+		getName();
 		startTimers();
 		window.addEventListener('orientationchange', screenSizeUpdate);
 
@@ -133,12 +160,15 @@
 
 				// Callback function
 				onSlideEnd: function(position, value) {
+					clearTimers();
 					var auxnumber = window.location.pathname.substring(8).replace ( /[^\d.]/g, '' )
 					var ch = (this.$element[0].id);
 					// var value = value;
-					volume = -(Math.pow(10,-((value-100)/100)*Math.log10(151))-1)
+					volume = -(Math.pow(10,-((value-100)/100)*Math.log10(1+soundMin))-1)
+					console.log(volume);
 					volume = Math.round(volume*100)/100
 					$.get( "/sd9/auxupdate/?aux="+auxnumber+"&ch="+ch+"&vol="+volume, function( data ) {
+						startTimers();
 					});
 				}
 			});
@@ -148,10 +178,13 @@
 	
 </head>
 <body>
-	<div id="faders" class="faders .ui-focus" >
-		<!-- <input id="1"type="range" min="0" max="100" data-rangeslider data-orientation="vertical">         -->
-		<!-- <output class="u-text-left"></output> -->
-	</div>
+	<div>
+		<div id="faders" class="faders" ></div>
 
+		<!-- <div class="control">
+			<p id="auxname"></p>
+			<a href="../../" class="btn btn-primary">Home</a>
+		</div> -->
+	</div>
 </body>
 </html>

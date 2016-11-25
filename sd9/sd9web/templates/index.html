@@ -1,59 +1,41 @@
+<!doctype html>
+<html lang="en">
 <head>
+  <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/static/rangeslider.css">
+	<!-- iOS Full screen -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
-    <script src="/static/jquery.min.js"></script>
-	<script src="/static/rangeslider.min.js"></script>
+	<link rel="stylesheet" href="/static/rangeslider.css">
+	<link rel="stylesheet" href="/static/bootstrap.min.css">
+	<link rel="stylesheet" href="/static/main.css">
+
+	<script src="/static/jquery.min.js"></script>
 	<script>
-	//    $('input[type="range"]').rangeslider({
+	$(function() {
+		function screenSizeUpdate()
+		{
+			var height = $(window).height();
+			console.log(height);
+			$("#app").height(height);
+		}
+		screenSizeUpdate();
 
-	// 		// Feature detection the default is `true`.
-	// 		// Set this to `false` if you want to use
-	// 		// the polyfill also in Browsers which support
-	// 		// the native <input type="range"> element.
-	// 		polyfill: true,
-
-	// 		// Default CSS classes
-	// 		rangeClass: 'rangeslider',
-	// 		disabledClass: 'rangeslider--disabled',
-	// 		horizontalClass: 'rangeslider--horizontal',
-	// 		verticalClass: 'rangeslider--vertical',
-	// 		fillClass: 'rangeslider__fill',
-	// 		handleClass: 'rangeslider__handle',
-
-	// 		// Callback function
-	// 		onInit: function() {},
-
-	// 		// Callback function
-	// 		onSlide: function(position, value) {},
-
-	// 		// Callback function
-	// 		onSlideEnd: function(position, value) {}
-	// 	});
-$('input[type="range"]').rangeslider({
-    polyfill : false,
-    onInit : function() {
-        this.output = $( '<div class="range-output" />' ).insertAfter( this.$range ).html( this.$element.val() );
-    },
-    onSlide : function( position, value ) {
-        this.output.html( value );
-    }
-});
+		$.get( "/sd9/auxnames/", function(data) {
+			data = (JSON.parse(data));
+			for (i = 0; i < data["values"].length; i++)
+			{
+				var input = '<div class="item"><a href="/sd9/aux/'+(i+1)+'" class="btn btn-primary btn-lg" id="aux'+i+'">'+data["values"][i]+'</a></div>'
+					$( "div#app" ).append(input);
+			}
+		});
+	});
 	</script>
 </head>
 <body>
-<!-- <label for="fader">Volume</label> -->
-<!-- <input type="range" min="0" max="100" value="50" id="fader" 
-	step="1" oninput="outputUpdate(value)"> -->
-
-	<input
-	    type="range"
-	    min="10"                    
-	    max="1000"                  
-	    step="10"                   
-	    value="300"                 
-	    data-orientation="vertical" 
-	>
-	
-<!-- <output for="fader" id="volume">50</output> -->
+	<div id="app" class="app">
+		
+	</div>
 </body>
+</html>

@@ -23,6 +23,13 @@ def auxData(request, auxnumber):
 	json_data = '{ "values" : ' + data["aux"+auxnumber+"Values"] + ', "names" : '+data["inputNames"]+' }'
 	return HttpResponse((json_data))
 
+def auxNames(request):
+	import json
+	context = {}
+	data = model_to_dict(SD9.objects.get(pk=1))
+	json_data = '{ "values" : ' + data["auxNames"] +'}'
+	return HttpResponse((json_data))
+
 def auxUpdate(request):
 	if request.method == 'GET':
 		auxnumber = request.GET.get('aux')

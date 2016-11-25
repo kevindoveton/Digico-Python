@@ -181,7 +181,7 @@ def clientStuff():
 
 print "--------------------------------"
 print "Server Connected"
-client.connect(ServerSettings.DESK_IP_ADDRESS, ServerSettings.SEND_PORT)
+
 print "Client Connected"
 print "--------------------------------"
 print "Initialising Complete"
@@ -193,14 +193,14 @@ print "--------------------------------"
 
 localdata = model_to_dict(SD9.objects.get(pk=1))
 runCount = 0
-requestInputNameUpdate()
-requestAuxNameUpdate()
+# requestInputNameUpdate()
+# requestAuxNameUpdate()
 while run:
-	serverUpdates()
+	# serverUpdates()
 	# receive from SD9 (server stuff)
 	serverStuff()
 	# send to SD9 (client stuff)
-	clientStuff()
+	# clientStuff()
 
 
 server.close()
